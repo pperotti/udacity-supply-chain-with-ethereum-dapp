@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.16; //0.4.24;
+
 // Define a contract 'Supplychain'
 contract SupplyChain {
 
@@ -29,7 +30,7 @@ contract SupplyChain {
     Shipped,    // 5
     Received,   // 6
     Purchased   // 7
-    }
+  }
 
   State constant defaultState = State.Harvested;
 
@@ -40,16 +41,16 @@ contract SupplyChain {
     address ownerID;  // Metamask-Ethereum address of the current owner as the product moves through 8 stages
     address originFarmerID; // Metamask-Ethereum address of the Farmer
     string  originFarmName; // Farmer Name
-    string  originFarmInformation;  // Farmer Information
+    string  originFarmInformation; // Farmer Information
     string  originFarmLatitude; // Farm Latitude
-    string  originFarmLongitude;  // Farm Longitude
+    string  originFarmLongitude; // Farm Longitude
     uint    productID;  // Product ID potentially a combination of upc + sku
     string  productNotes; // Product Notes
     uint    productPrice; // Product Price
     State   itemState;  // Product State as represented in the enum above
     address distributorID;  // Metamask-Ethereum address of the Distributor
     address retailerID; // Metamask-Ethereum address of the Retailer
-    address consumerID; // Metamask-Ethereum address of the Consumer
+    address payable consumerID; // Metamask-Ethereum address of the Consumer
   }
 
   // Define 8 events with the same 8 state values and accept 'upc' as input argument
@@ -148,22 +149,21 @@ contract SupplyChain {
   // Define a function 'kill' if required
   function kill() public {
     if (msg.sender == owner) {
-      selfdestruct(owner);
+      selfdestruct(msg.sender);
     }
   }
 
   // Define a function 'harvestItem' that allows a farmer to mark an item 'Harvested'
   function harvestItem(uint _upc, 
     address _originFarmerID, 
-    string _originFarmName, 
-    string _originFarmInformation, 
-    string _originFarmLatitude, 
-    string _originFarmLongitude, 
-    string _productNotes) onlyOwner public 
+    string memory _originFarmName, 
+    string memory _originFarmInformation, 
+    string memory _originFarmLatitude, 
+    string memory _originFarmLongitude, 
+    string memory _productNotes) onlyOwner public 
   {
     // Add the new item as part of Harvest
-    Item newItem = Item({
-      sku: sku,
+    Item memory newItem = Item({sku: sku,
       upc: _upc,
       ownerID: msg.sender,
       originFarmerID: _originFarmerID,
@@ -171,9 +171,15 @@ contract SupplyChain {
       originFarmInformation: _originFarmInformation,
       originFarmLatitude: _originFarmLatitude,
       originFarmLongitude: _originFarmLongitude,
+      productID: 0,
       productNotes: _productNotes,
-      itemState: State.Harvested
+      productPrice: 0,
+      itemState: defaultState,
+      distributorID: address(0x0),
+      retailerID: address(0x0),
+      consumerID: address(0x0)
     });
+
     items[sku] = newItem;
     
     // Increment sku
@@ -214,6 +220,7 @@ contract SupplyChain {
   {
     // Update the appropriate fields
     items[_upc].itemState = State.ForSale;
+    items[_upc].productPrice = _price;
 
     // Emit the appropriate event
     emit ForSale(_upc);
@@ -235,7 +242,10 @@ contract SupplyChain {
 
     // Transfer money to farmer
     if (msg.value >= items[_upc].productPrice) {
-      checkValue(_upc);
+      //checkValue(_upc);
+      uint _price = items[_upc].productPrice;
+      uint amountToReturn = msg.value - _price;
+      items[_upc].consumerID.transfer(amountToReturn);
     }
 
     // emit the appropriate event
@@ -292,23 +302,25 @@ contract SupplyChain {
     uint    itemUPC,
     address ownerID,
     address originFarmerID,
-    string  originFarmName,
-    string  originFarmInformation,
-    string  originFarmLatitude,
-    string  originFarmLongitude
+    string memory originFarmName,
+    string memory originFarmInformation,
+    string memory originFarmLat,
+    string memory originFarmLong
     )
   {
+    Item memory item = items[_upc];
+
     // Assign values to the 8 parameters
     return 
     (
-      items[_upc].itemSKU,
-      items[_upc].itemUPC,
-      items[_upc].ownerID,
-      items[_upc].originFarmerID,
-      items[_upc].originFarmName,
-      items[_upc].originFarmInformation,
-      items[_upc].originFarmLatitude,
-      items[_upc].originFarmLongitude
+      item.sku,
+      item.upc,
+      item.ownerID,
+      item.originFarmerID,
+      item.originFarmName,
+      item.originFarmInformation,
+      item.originFarmLatitude,
+      item.originFarmLongitude
     );
   }
 
@@ -318,26 +330,29 @@ contract SupplyChain {
     uint    itemSKU,
     uint    itemUPC,
     uint    productID,
-    string  productNotes,
+    string memory productNotes,
     uint    productPrice,
-    uint    itemState,
+    State   itemState,
     address distributorID,
     address retailerID,
-    address consumerID
+    address payable consumerID
     ) 
   {
-    // Assign values to the 9 parameters
+
+  Item memory item = items[_upc];
+
+  // Assign values to the 9 parameters
   return 
     (
-    items[_upc].itemSKU,
-    items[_upc].itemUPC,
-    items[_upc].productID,
-    items[_upc].productNotes,
-    items[_upc].productPrice,
-    items[_upc].itemState,
-    items[_upc].distributorID,
-    items[_upc].retailerID,
-    items[_upc].consumerID
+    item.sku,
+    item.upc,
+    item.productID,
+    item.productNotes,
+    item.productPrice,
+    item.itemState,
+    item.distributorID,
+    item.retailerID,
+    item.consumerID
     );
   }
 }
