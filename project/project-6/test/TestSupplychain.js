@@ -75,6 +75,9 @@ contract('SupplyChain', function(accounts) {
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
+        //let count = await supplyChain.upcList.length;
+        //console.log("count: " + count);
+
         // Verify the result set
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
         assert.equal(resultBufferOne[1], upc, 'Error: Invalid item UPC')
@@ -333,6 +336,23 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[6], distributorID, 'Error: Invalid distributorID')
         assert.equal(resultBufferTwo[7], retailerID, 'Error: Invalid retailerID')
         assert.equal(resultBufferTwo[8], consumerID, 'Error: Invalid consumerID')
+    })
+
+    // Extra Tests
+    it("Get all items harvested by one particular farmer", async() => {
+        
+        const itemCount = await supplyChain.getHarvestedItemsCount(originFarmerID);
+        console.log("item count: " + itemCount);
+        //console.log("address: " + originFarmerID);
+        const items = await supplyChain.getHarvestedItemsByFarmer(originFarmerID);
+        console.log("UPC LIST SIZE:" + items.length);
+        for (i=0;i<itemCount;i++) {
+            console.log("UPC #: " + items[i]);
+        }
+        assert.equal(itemCount, 1, "Error: We should have 1 items harvested for this farmer"); 
+
+        console.log("Value: " + supplyChain.lastUpc.v);
+        
     })
 
 });

@@ -13,13 +13,17 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   address owner;
 
   // Define a variable called 'upc' for Universal Product Code (UPC)
-  uint upc;
+  uint upc = 0;
 
   // Define a variable called 'sku' for Stock Keeping Unit (SKU)
-  uint sku;
+  uint sku = 0;
 
   // Define a public mapping 'items' that maps the UPC to an Item.
   mapping (uint => Item) items;
+
+  // Track the items harvested by farmer
+  //mapping (address => uint[]) itemCountHarvestedByFarmer;
+  mapping (address => uint[]) itemHarvestedByFarmer;
 
   // Define a public mapping 'itemsHistory' that maps the UPC to an array of TxHash, 
   // that track its journey through the supply chain -- to be sent from DApp.
@@ -39,6 +43,18 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   }
 
   State constant defaultState = State.Harvested;
+
+  struct SKU {
+    uint v;
+  }
+
+  SKU public nextSku;
+
+  struct Upc {
+    uint v;
+  }
+
+  Upc public lastUpc;
 
   // Define a struct 'Item' with the following fields:
   struct Item {
@@ -68,6 +84,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   event Shipped(uint upc);
   event Received(uint upc);
   event Purchased(uint upc);
+  event FarmerResult(bool value);
 
   // Define a modifer that checks to see if msg.sender == owner of the contract
   //TODO; Commented out to avoid conflits with Ownable
@@ -157,6 +174,8 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     owner = msg.sender;
     sku = 1;
     upc = 1;
+    nextSku = SKU(sku);
+    lastUpc = Upc(upc);
   }
 
   // Define a function 'kill' if required
@@ -197,6 +216,13 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     // Increment sku
     sku = sku + 1;
     
+    // Record last Sku and last Upc used
+    nextSku = SKU(sku);
+    lastUpc = Upc(upc);
+
+    // Track the items harvested by this farmer
+    itemHarvestedByFarmer[_originFarmerID].push(_upc);
+
     // Emit the appropriate event
     emit Harvested(_upc);
   }
@@ -410,5 +436,53 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   function getStateByUpc(uint _upc) public view returns (uint) {
     return uint(items[_upc].itemState);
   }
+
+  function requireRegistration(address _address) public view returns (bool) {
+    if (isFarmer(_address)) {
+      return false;
+    } else if (isDistributor(_address)) {
+      return false;
+    } else if (isRetailer(_address)) {
+      return false;
+    } else if (isConsumer(_address)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function getHarvestedItemsCount(address _address) public view returns (uint) {
+    return itemHarvestedByFarmer[_address].length;
+  }
+
+  function getHarvestedItemsByFarmer(address _address) public view returns (uint[] memory) {
+    uint[] memory copiedIndexes = new uint[](itemHarvestedByFarmer[_address].length);
+//
+    for (uint i = 0; i < itemHarvestedByFarmer[_address].length; i++ ) {
+      copiedIndexes[i] = itemHarvestedByFarmer[_address][i];
+    }
+
+    return copiedIndexes;
+  }
+
+  function emitInfo() public {
+    emit FarmerResult(false);
+  }
+
+  function getAAA() public view returns (uint) {
+    return lastUpc.v;
+  }
+
+/*
+  function getHarvestingInfo() public view returns (
+    uint nSku,
+    uint lUpc
+  ) {
+    return (
+      12,
+      15
+      );
+  }
+  */
 
 }
