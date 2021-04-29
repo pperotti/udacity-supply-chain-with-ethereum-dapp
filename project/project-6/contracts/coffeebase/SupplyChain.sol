@@ -470,7 +470,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   }
 
   function getAAA() public view returns (uint) {
-    return lastUpc.v;
+    return 12;
   }
 
 /*

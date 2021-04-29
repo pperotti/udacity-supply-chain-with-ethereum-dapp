@@ -351,7 +351,7 @@ contract('SupplyChain', function(accounts) {
         }
         assert.equal(itemCount, 1, "Error: We should have 1 items harvested for this farmer"); 
 
-        console.log("Value: " + supplyChain.lastUpc.v);
+        console.log("Value: " + (await supplyChain.getAAA()));
         
     })
 

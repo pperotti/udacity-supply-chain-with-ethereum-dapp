@@ -111,11 +111,7 @@ App = {
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
             
-            App.fetchItemBufferOne();
-            App.fetchItemBufferTwo();
-            App.fetchEvents();
-            App.checkAccountRoles();
-            App.fetchItemsForCurrentAddress();
+            App.initializeApp();
         });
 
         return App.bindEvents();
@@ -124,6 +120,14 @@ App = {
     bindEvents: function() {
         $(document).on('click', App.handleButtonClick);
         $(document).on('FarmerResult', App.farmerInfo);
+    },
+
+    initializeApp: function() {
+        App.fetchItemBufferOne();
+        App.fetchItemBufferTwo();
+        App.fetchEvents();
+        App.checkAccountRoles();
+        App.fetchItemsForCurrentAddress();
     },
 
     farmerInfo: async function(event) {
@@ -528,8 +532,12 @@ App = {
         //const sc = await App.contracts.SupplyChain.deployed();
         //const itemsByFarmer = sc.getHarvestedItemsByFarmer(App.metamaskAccountID);
         
+        var ins;
+
         App.contracts.SupplyChain.deployed().then(function(instance) {
-             return instance.getHarvestedItemsCount(App.metamaskAccountID);
+            ins = instance;
+            return ins.getAAA.call();
+            //return ins.getHarvestedItemsCount(App.metamaskAccountID);
             //return instance.getHarvestedItemsByFarmer(App.metamaskAccountID);
         }).then(function(count) {
             console.log("item count: " + count);
