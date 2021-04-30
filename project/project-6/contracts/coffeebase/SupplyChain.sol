@@ -44,18 +44,6 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
 
   State constant defaultState = State.Harvested;
 
-  struct SKU {
-    uint v;
-  }
-
-  SKU public nextSku;
-
-  struct Upc {
-    uint v;
-  }
-
-  Upc public lastUpc;
-
   // Define a struct 'Item' with the following fields:
   struct Item {
     uint    sku;  // Stock Keeping Unit (SKU)
@@ -174,8 +162,6 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     owner = msg.sender;
     sku = 1;
     upc = 1;
-    nextSku = SKU(sku);
-    lastUpc = Upc(upc);
   }
 
   // Define a function 'kill' if required
@@ -192,7 +178,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     string memory _originFarmInformation, 
     string memory _originFarmLatitude, 
     string memory _originFarmLongitude, 
-    string memory _productNotes) onlyOwner public 
+    string memory _productNotes) public 
   {
     
     // Add the new item as part of Harvest
@@ -215,10 +201,6 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     
     // Increment sku
     sku = sku + 1;
-    
-    // Record last Sku and last Upc used
-    nextSku = SKU(sku);
-    lastUpc = Upc(upc);
 
     // Track the items harvested by this farmer
     itemHarvestedByFarmer[_originFarmerID].push(_upc);
@@ -457,7 +439,6 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
 
   function getHarvestedItemsByFarmer(address _address) public view returns (uint[] memory) {
     uint[] memory copiedIndexes = new uint[](itemHarvestedByFarmer[_address].length);
-//
     for (uint i = 0; i < itemHarvestedByFarmer[_address].length; i++ ) {
       copiedIndexes[i] = itemHarvestedByFarmer[_address][i];
     }
@@ -465,24 +446,15 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     return copiedIndexes;
   }
 
-  function emitInfo() public {
-    emit FarmerResult(false);
+  function getNextSku() public view returns (uint) {
+    return sku;
   }
 
-  function getAAA() public view returns (uint) {
-    return 12;
+  function getUpc() public view returns (uint) {
+    return upc;
   }
 
-/*
-  function getHarvestingInfo() public view returns (
-    uint nSku,
-    uint lUpc
-  ) {
-    return (
-      12,
-      15
-      );
+  function getOwner() public view returns (address) {
+    return owner;
   }
-  */
-
 }

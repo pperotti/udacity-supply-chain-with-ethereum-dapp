@@ -69,16 +69,17 @@ contract('SupplyChain', function(accounts) {
             originFarmInformation, 
             originFarmLatitude, 
             originFarmLongitude, 
-            productNotes)
+            productNotes);
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
-        const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
-        const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
+        const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc);
+        const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc);
 
         //let count = await supplyChain.upcList.length;
         //console.log("count: " + count);
 
         // Verify the result set
+        assert.equal(eventEmitted, true, 'Invalid event emitted')
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
         assert.equal(resultBufferOne[1], upc, 'Error: Invalid item UPC')
         assert.equal(resultBufferOne[2], originFarmerID, 'Error: Missing or Invalid ownerID')
@@ -88,10 +89,9 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferOne[6], originFarmLatitude, 'Error: Missing or Invalid originFarmLatitude')
         assert.equal(resultBufferOne[7], originFarmLongitude, 'Error: Missing or Invalid originFarmLongitude')
         assert.equal(resultBufferTwo[5], 0, 'Error: Invalid item State')
-        assert.equal(eventEmitted, true, 'Invalid event emitted')
+        
          
     })    
-    
     
     // 2nd Test
     it("Testing smart contract function processItem() that allows a farmer to process coffee", async() => {
@@ -119,7 +119,7 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[5], 1, 'Error: Invalid state')
         assert.equal(eventEmitted, true, 'Invalid event emitted')
     })
-    
+
     // 3rd Test
     it("Testing smart contract function packItem() that allows a farmer to pack coffee", async() => {
         
@@ -226,14 +226,13 @@ contract('SupplyChain', function(accounts) {
         // Watch the emitted event Shipped()
         supplyChain.Shipped(function(err, res) {
             eventEmitted = true
-        })
-  
-/*        
-        console.log("DistributorID: " + distributorID)
-        console.log("Owner By UPC: " + await supplyChain.getOwnerByUpc(upc))
-        console.log("State By UPC: " + await supplyChain.getStateByUpc(upc))
-        console.log("Is Caller a distributor: " + await supplyChain.verifyCallerForUpc(upc, distributorID))
-*/
+        })  
+        
+        // console.log("DistributorID: " + distributorID)
+        // console.log("Owner By UPC: " + await supplyChain.getOwnerByUpc(upc))
+        // console.log("State By UPC: " + await supplyChain.getStateByUpc(upc))
+        // console.log("Is Caller a distributor: " + await supplyChain.verifyCallerForUpc(upc, distributorID))
+
         // Mark an item as Sold by calling function buyItem()
         await supplyChain.shipItem(upc, {from: distributorID})
 
@@ -341,18 +340,16 @@ contract('SupplyChain', function(accounts) {
     // Extra Tests
     it("Get all items harvested by one particular farmer", async() => {
         
+        console.log("owner: " + (await supplyChain.getOwner()));
         const itemCount = await supplyChain.getHarvestedItemsCount(originFarmerID);
-        console.log("item count: " + itemCount);
+        console.log("Item count: " + itemCount);
         //console.log("address: " + originFarmerID);
         const items = await supplyChain.getHarvestedItemsByFarmer(originFarmerID);
         console.log("UPC LIST SIZE:" + items.length);
-        for (i=0;i<itemCount;i++) {
-            console.log("UPC #: " + items[i]);
-        }
-        assert.equal(itemCount, 1, "Error: We should have 1 items harvested for this farmer"); 
-
-        console.log("Value: " + (await supplyChain.getAAA()));
-        
+        // for (i=0;i<itemCount;i++) {
+        //     console.log("UPC #: " + items[i]);
+        // }
+        assert.equal(itemCount, items.length, "Error: We should have 1 items harvested for this farmer");
     })
 
 });
