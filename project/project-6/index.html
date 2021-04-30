@@ -106,22 +106,16 @@
                 <input type="text" id="harvestUpc" name="harvestUpc" size="50"><br>
                 PRODUCT NOTES
                 <input type="text" id="harvestProductNotes" name="harvestProductNotes" value="Notes"/>
-                <!--
-                <br>
-                SKU
-                <br>
-                <input type="text" id="harvestSku" name="harvestSku" size="50"><br>
-                -->
                 <br><br>
                 <button class="btn-harvest" id="button" type="button" data-id="1">Harvest</button>
             </div>
             <hr/>
             <div class="form-group">
                 Item Harvested by this Farmer<br/><br/>
-                <div id="ftc-harvested-item-list">
+                <form id="ftc-harvested-item-list">
                 
-                </div>
-                <hr/>
+                </form>
+                <br>
                 <button class="btn-process" id="button" type="button" data-id="2">Process</button>
                 <button class="btn-pack" id="button" type="button" data-id="3">Pack</button>
                 <button class="btn-forsale" id="button" type="button" data-id="4">ForSale</button>
@@ -163,8 +157,7 @@
         <ul id="ftc-events">
             <!-- Events will appear here from app.js -->
         </ul>
-        <br>
-        <hr>
+        <br><br>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
