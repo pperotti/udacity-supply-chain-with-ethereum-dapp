@@ -142,42 +142,40 @@ const App = {
     handleButtonClick: function(event) {
         event.preventDefault();
 
-        // App.getMetaMaskAccountID();
-
         var processId = parseInt($(event.target).data('id'));
-        console.log('ProcessId: ' + processId);
+        //console.log('ProcessId: ' + processId);
 
         switch(processId) {
             case 1:
                 return App.harvestItem(event);
                 break;
-            /*case 2:
-                return await App.processItem(event);
+            case 2:
+                return App.processItem(event);
                 break;
             case 3:
-                return await App.packItem(event);
+                return App.packItem(event);
                 break;
             case 4:
-                return await App.sellItem(event);
+                return App.sellItem(event);
                 break;
             case 5:
-                return await App.buyItem(event);
+                return App.buyItem(event);
                 break;
             case 6:
-                return await App.shipItem(event);
+                return App.shipItem(event);
                 break;
             case 7:
-                return await App.receiveItem(event);
+                return App.receiveItem(event);
                 break;
             case 8:
-                return await App.purchaseItem(event);
+                return App.purchaseItem(event);
                 break;
             case 9:
-                return await App.fetchItemBufferOne(event);
+                return App.fetchItemBufferOne(event);
                 break;
             case 10:
-                return await App.fetchItemBufferTwo(event);
-                break;*/
+                return App.fetchItemBufferTwo(event);
+                break;
             case 11:
                 return App.registerAccount(event);
                 break;
@@ -226,40 +224,80 @@ const App = {
         });
     },
 
-    processItem: function (event) {
-        event.preventDefault();
-        var processId = parseInt($(event.target).data('id'));
-        console.log("ProcessID: " + processId);
+    getSelectedFarmerItem: function() {
+        var farmerItems = document.getElementsByName('curitem');
+        var selectedItem = -1;
+        for (let i=0;i<farmerItems.length;i++) {
+            if (farmerItems[i].checked == true) {
+                selectedItem = i;
+            }
+        }
+        return selectedItem;
+    },
 
+    selectCurrentItem: function(i) {
+        console.log("SelectCurrentItem: " + i);
+        if (i > -1) {
+            const name = "#farmeritem" + i;
+            var item = document.getElementById(name);
+            item.checked = true;
+            item.defaultChecked = true;
+            console.log("Name: " + name + " item.checked: " + item.checked + " item.defaultChecked=" + item.defaultChecked);
+        }
+    },
+
+    processItem: function (event) {
+        var value = $("#ftc-harvested-item-list").val();
+        console.log("Selected UPC: " + value)
+
+        //Continue only if we know what to do.
+        if (value == undefined) {
+            console.log("Nothing to do until there are values");
+            return
+        } 
+        
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.processItem(App.upc, {from: App.metamaskAccountID});
+            return instance.processItem(value, {from: App.metamaskAccountID});
         }).then(function(result) {
             $("#ftc-item").text(result);
             console.log('processItem',result);
-        }).catch(function(err) {
+        }).then(() => App.fetchItemsForCurrentAddress()) 
+        .catch(function(err) {
             console.log(err.message);
         });
+        
     },
     
     packItem: function (event) {
-        event.preventDefault();
-        var processId = parseInt($(event.target).data('id'));
-        console.log("ProcessID: " + processId);
+        var value = $("#ftc-harvested-item-list").val();
+        console.log("Selected UPC: " + value)
+
+        //Continue only if we know what to do.
+        if (value == undefined) {
+            console.log("Nothing to do until there are values");
+            return
+        } 
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.packItem(App.upc, {from: App.metamaskAccountID});
+            return instance.packItem(value, {from: App.metamaskAccountID});
         }).then(function(result) {
             $("#ftc-item").text(result);
             console.log('packItem',result);
-        }).catch(function(err) {
+        }).then(() => App.fetchItemsForCurrentAddress()) 
+        .catch(function(err) {
             console.log(err.message);
         });
     },
 
     sellItem: function (event) {
-        event.preventDefault();
-        var processId = parseInt($(event.target).data('id'));
-        console.log("ProcessID: " + processId);
+        var value = $("#ftc-harvested-item-list").val();
+        console.log("Selected UPC: " + value)
+        
+        //Continue only if we know what to do.
+        if (value == undefined) {
+            console.log("Nothing to do until there are values");
+            return
+        } 
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             const productPrice = web3.toWei(1, "ether");
@@ -267,8 +305,9 @@ const App = {
             return instance.sellItem(App.upc, App.productPrice, {from: App.metamaskAccountID});
         }).then(function(result) {
             $("#ftc-item").text(result);
-            console.log('sellItem',result);
-        }).catch(function(err) {
+            console.log('sellItem', result);
+        }).then(() => App.fetchItemsForCurrentAddress()) 
+        .catch(function(err) {
             console.log(err.message);
         });
     },
@@ -337,25 +376,26 @@ const App = {
     fetchItemBufferOne: async function () {
         event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
-        App.upc = $('#upc').val();
-        console.log('upc:' + App.upc);
+        //App.upc = $('#upc').val();
+        
+        const upc = $('#upc').val();
+        console.log('upc:' + upc);
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            App.SupplyChain = instance;
-            return instance.fetchItemBufferOne(App.upc);
+            return instance.fetchItemBufferOne(upc);
         }).then(function(result) {
           //$("#ftc-item").text(result);
           //console.log('fetchItemBufferOne: ' + result);
           $("#fetchone-details").empty();
           if (result !== undefined) {
-            $("#fetchone-details").append('<li>SKU: ' + App.sku + '</li>');
-            $("#fetchone-details").append('<li>UPC: ' + App.upc + '</li>');
-            $("#fetchone-details").append('<li>OWNER ID: ' + App.ownerID + '</li>');
-            $("#fetchone-details").append('<li>FARMER ID: ' + App.originFarmerID + '</li>');
-            $("#fetchone-details").append('<li>FARMER NAME: ' + App.originFarmName + '</li>');
-            $("#fetchone-details").append('<li>FARMER INFORMATION: ' + App.originFarmInformation + '</li>');
-            $("#fetchone-details").append('<li>FARMER LATITUDE: ' + App.originFarmLatitude + '</li>');
-            $("#fetchone-details").append('<li>FARMER LATITUDE: ' + App.originFarmLongitude + '</li>');
+            $("#fetchone-details").append('<li>SKU: ' + result[0] + '</li>');
+            $("#fetchone-details").append('<li>UPC: ' + result[1] + '</li>');
+            $("#fetchone-details").append('<li>OWNER ID: ' + result[2] + '</li>');
+            $("#fetchone-details").append('<li>FARMER ID: ' + result[3] + '</li>');
+            $("#fetchone-details").append('<li>FARMER NAME: ' + result[4] + '</li>');
+            $("#fetchone-details").append('<li>FARMER INFORMATION: ' + result[5] + '</li>');
+            $("#fetchone-details").append('<li>FARMER LATITUDE: ' + result[6] + '</li>');
+            $("#fetchone-details").append('<li>FARMER LATITUDE: ' + result[7] + '</li>');
           }
 
         }).catch(function(err) {
@@ -366,9 +406,12 @@ const App = {
     fetchItemBufferTwo: async function () {
         event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
-                        
+                            
+        const upc = $('#upc').val();
+        console.log('upc:' + upc);
+
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchItemBufferTwo.call(App.upc);
+          return instance.fetchItemBufferTwo.call(upc);
         }).then(function(result) {
           //$("#ftc-item").text(result);
           //console.log('fetchItemBufferTwo', result);
@@ -560,12 +603,31 @@ const App = {
                 const itemNumber = i;
                 const upc = items[itemNumber];
                 console.log("item: " + itemNumber + " upc: " + upc);
-                let d1;
-                let d2;
+                var d1;
+                var d2;
                 ins.fetchItemBufferOne(upc).then(function(result) {
                     d1 = result;
                     return ins.fetchItemBufferTwo(upc);
                 }).then(function(d2) {
+
+                    /*
+                    const localSku = d1[0];
+                    const localUpc = d1[1];
+                    const localOwner = d1[2];
+                    const localFarmer = d1[3];
+                    */
+
+                    /*
+                    console.log(
+                        "\nITEM #" + itemNumber +
+                        "\nSKU: " + localSku + " UPC: " + localUpc +
+                        "\nOWNER ID: " + localOwner + 
+                        "\nFARMER ID: " + localFarmer + 
+                        "\nDISTRIBUTOR ID: " + d2[6] + 
+                        "\nRETAILER ID: " + d2[7] + 
+                        "\nCONSUMER ID: " + d2[8] + 
+                        "\nSTATE: " + d2[5] 
+                    );*/
                     /*
                     $("#ftc-harvested-item-list").append(
                         "<li>ITEM #" + itemNumber +
@@ -579,9 +641,18 @@ const App = {
                         "</li>"
                     );
                     */
+
                     $("#ftc-harvested-item-list").append(
-                        "<input style='width: 10%' type='radio' id='" + upc + "' name='curitem' value='" + upc + "'/><label>Item #" + itemNumber + "</label><br/>"
+                        "<option value='" + upc + "'>" 
+                            + " ITEM #" + itemNumber 
+                            + " SKU: " + d1[0]
+                            + " UPC: " + d1[1]
+                            + "\nOWNER: " + d1[2]
+                            + "\nFARMER: " + d1[3]
+                            + "\nSTATE: " + d2[5] 
+                            + "</option>"
                     );
+
                 });
             }
         });

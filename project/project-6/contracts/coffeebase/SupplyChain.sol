@@ -13,7 +13,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   address owner;
 
   // Define a variable called 'upc' for Universal Product Code (UPC)
-  uint upc = 0;
+  // uint upc = 0; // This property is not needed.
 
   // Define a variable called 'sku' for Stock Keeping Unit (SKU)
   uint sku = 0;
@@ -157,11 +157,9 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
 
   // In the constructor set 'owner' to the address that instantiated the contract
   // and set 'sku' to 1
-  // and set 'upc' to 1
   constructor() public payable {  
     owner = msg.sender;
     sku = 1;
-    upc = 1;
   }
 
   // Define a function 'kill' if required
@@ -182,7 +180,8 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   {
     
     // Add the new item as part of Harvest
-    items[sku] = Item(sku,
+    //items[sku] = Item(sku,
+    items[_upc] = Item(sku,
       _upc,
       _originFarmerID, //The first owner is the FARMER.
       _originFarmerID,
@@ -199,11 +198,11 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
       address(0x0)
     );
     
-    // Increment sku
-    sku = sku + 1;
-
     // Track the items harvested by this farmer
     itemHarvestedByFarmer[_originFarmerID].push(_upc);
+
+    // Increment sku
+    sku = sku + 1;
 
     // Emit the appropriate event
     emit Harvested(_upc);
@@ -344,9 +343,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     string memory originFarmLong
     )
   {
-    Item storage item = items[_upc];
-
-    // Assign values to the 8 parameters
+    Item memory item = items[_upc];
     return 
     (
       item.sku,
@@ -374,9 +371,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     address payable consumerID
     ) 
   {
-    Item storage item = items[_upc];
-
-    // Assign values to the 9 parameters
+    Item memory item = items[_upc];
     return 
     (
       item.sku,
@@ -403,7 +398,7 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     return msg.sender;
   }
 
-  function getForSender(uint _upc) public view returns (bool) {
+  function isItemForSale(uint _upc) public view returns (bool) {
     return (items[_upc].itemState == State.ForSale);
   }
 
@@ -448,10 +443,6 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
 
   function getNextSku() public view returns (uint) {
     return sku;
-  }
-
-  function getUpc() public view returns (uint) {
-    return upc;
   }
 
   function getOwner() public view returns (address) {

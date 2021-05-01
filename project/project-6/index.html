@@ -47,7 +47,7 @@
         -->
     </div>
     <div id="ftc-harvest">
-        <div id="ftc-product-details" style="display: none;">
+        <div id="ftc-product-details">
             <h2>Product Overview</h2>
             <table style="width:100%">
                 <tr>
@@ -105,6 +105,7 @@
                 <br>
                 <input type="text" id="harvestUpc" name="harvestUpc" size="50"><br>
                 PRODUCT NOTES
+                <br>
                 <input type="text" id="harvestProductNotes" name="harvestProductNotes" value="Notes"/>
                 <br><br>
                 <button class="btn-harvest" id="button" type="button" data-id="1">Harvest</button>
@@ -112,10 +113,10 @@
             <hr/>
             <div class="form-group">
                 Item Harvested by this Farmer<br/><br/>
-                <form id="ftc-harvested-item-list">
+                <select id="ftc-harvested-item-list">
                 
-                </form>
-                <br>
+                </select>
+                <br><br>
                 <button class="btn-process" id="button" type="button" data-id="2">Process</button>
                 <button class="btn-pack" id="button" type="button" data-id="3">Pack</button>
                 <button class="btn-forsale" id="button" type="button" data-id="4">ForSale</button>
