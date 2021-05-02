@@ -120,7 +120,6 @@ const App = {
 
     bindEvents: async function() {
         $(document).on('click', App.handleButtonClick);
-        $(document).on('Harvested', console.log);
     },
 
     initializeApp: async function() {
@@ -136,7 +135,6 @@ const App = {
         App.fetchItemBufferTwo();
         App.fetchEvents();
         App.checkAccountRoles();
-        //App.fetchItemsForCurrentAddress();
     },
 
     handleButtonClick: function(event) {
@@ -179,6 +177,9 @@ const App = {
             case 11:
                 return App.registerAccount(event);
                 break;
+            case 12:
+                return App.returnToRegistration(event);
+                break;
             }
     },
 
@@ -196,16 +197,6 @@ const App = {
             App.originFarmLatitude = $("#originFarmLatitude").val();
             App.originFarmLongitude = $("#originFarmLongitude").val();
             App.productNotes = $("#harvestProductNotes").val();
-
-            console.log("App.upc: " + App.upc);
-            console.log("App.ownerID: " + App.ownerID);
-            console.log("Form FarmerID: " + $("#harvestFarmerID").val());
-            console.log("App.originFarmerID: " + App.originFarmerID);
-            console.log("App.originFarmName: " + App.originFarmName);
-            console.log("App.originFarmInformation: " + App.originFarmInformation);
-            console.log("App.originFarmLatitude: " + App.originFarmLatitude);
-            console.log("App.originFarmLongitude: " + App.originFarmLongitude);
-            console.log("App.productNotes: " + App.productNotes);
             
             return instance.harvestItem(
                 App.upc, 
@@ -218,32 +209,12 @@ const App = {
 
         }).then(function(result) {
             $("#ftc-item").text(result);
-            console.log('harvestItem',result);
-        }).catch(function(err) {
+            console.log('harvestItem',result);    
+        })
+        .then(() => App.fetchItemsForCurrentAddress())
+        .catch(function(err) {
             console.log(err);
         });
-    },
-
-    getSelectedFarmerItem: function() {
-        var farmerItems = document.getElementsByName('curitem');
-        var selectedItem = -1;
-        for (let i=0;i<farmerItems.length;i++) {
-            if (farmerItems[i].checked == true) {
-                selectedItem = i;
-            }
-        }
-        return selectedItem;
-    },
-
-    selectCurrentItem: function(i) {
-        console.log("SelectCurrentItem: " + i);
-        if (i > -1) {
-            const name = "#farmeritem" + i;
-            var item = document.getElementById(name);
-            item.checked = true;
-            item.defaultChecked = true;
-            console.log("Name: " + name + " item.checked: " + item.checked + " item.defaultChecked=" + item.defaultChecked);
-        }
     },
 
     processItem: function (event) {
@@ -300,9 +271,10 @@ const App = {
         } 
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            const productPrice = web3.toWei(1, "ether");
-            console.log('productPrice',productPrice);
-            return instance.sellItem(App.upc, App.productPrice, {from: App.metamaskAccountID});
+            //const productPrice = web3.toWei(1, "ether");
+            const productPrice = 1
+            console.log('productPrice', productPrice);
+            return instance.sellItem(value, productPrice, {from: App.metamaskAccountID});
         }).then(function(result) {
             $("#ftc-item").text(result);
             console.log('sellItem', result);
@@ -375,8 +347,6 @@ const App = {
 
     fetchItemBufferOne: async function () {
         event.preventDefault();
-    ///    var processId = parseInt($(event.target).data('id'));
-        //App.upc = $('#upc').val();
         
         const upc = $('#upc').val();
         console.log('upc:' + upc);
@@ -405,7 +375,6 @@ const App = {
 
     fetchItemBufferTwo: async function () {
         event.preventDefault();
-    ///    var processId = parseInt($(event.target).data('id'));
                             
         const upc = $('#upc').val();
         console.log('upc:' + upc);
@@ -413,8 +382,6 @@ const App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchItemBufferTwo.call(upc);
         }).then(function(result) {
-          //$("#ftc-item").text(result);
-          //console.log('fetchItemBufferTwo', result);
           $("#fetchtwo-details").empty();
           if (result !== undefined) {
             $("#fetchtwo-details").append('<li>SKU: ' + result[0] + '</li>');
@@ -554,15 +521,13 @@ const App = {
         console.log("Show Farmer Options!");
         $("#ftc-registration").hide();
         $("#ftc-farmer").show();
+        $("#ftc-switch-account").show();
 
         //Update FARMER'S ID
         App.contracts.SupplyChain.deployed().then(function(instance) {
             document.getElementById("harvestFarmerID").value = App.metamaskAccountID;
             document.getElementById("originFarmName").value = "Farm Name";
             document.getElementById("originFarmInformation").value = "Farm Information";
-            return instance.getUpc();
-        }).then(function(upc) {
-            document.getElementById("harvestUpc").value = upc;
         });
     },
 
@@ -584,6 +549,28 @@ const App = {
         $("#ftc-consumer").show();
     },
 
+    getStateName: function(enumValue) {
+        if (enumValue == 0) {
+            return "harvested";
+          } else if (enumValue == 1) {
+            return "processed";
+          } else if (enumValue == 2) {
+            return "packed";
+          } else if (enumValue == 3) {
+            return "forsale";
+          } else if (enumValue == 4) {
+            return "sold";
+          } else if (enumValue == 5) {
+            return "shipped";
+          } else if (enumValue == 6) {
+            return "received";
+          } else if (enumValue == 7) {
+            return "purchased";
+          } else {
+            return "unknown";
+          }
+    },
+
     fetchItemsForCurrentAddress: async function() {
         var ins;
         var itemsCount;
@@ -592,70 +579,47 @@ const App = {
             ins = instance;
             return ins.getHarvestedItemsCount(App.metamaskAccountID);
         }).then(function(count) {
-            console.log("item count: " + count);
+            //console.log("item count: " + count);
             itemsCount = count;
             return ins.getHarvestedItemsByFarmer(App.metamaskAccountID);
         }).then(function(items) {
             //List the items currently 
             $("#ftc-harvested-item-list").empty();
 
+            var lines = [];
             for (var i=0;i<itemsCount;i++) {
-                const itemNumber = i;
-                const upc = items[itemNumber];
-                console.log("item: " + itemNumber + " upc: " + upc);
-                var d1;
-                var d2;
-                ins.fetchItemBufferOne(upc).then(function(result) {
-                    d1 = result;
+                const iterationNumber = i;
+                const upc = items[iterationNumber];
+                //console.log("item: " + iterationNumber + " upc: " + upc);
+                lines[iterationNumber] = "<option value='" + upc + "'>"
+                    + " ITEM #" + iterationNumber;
+
+                ins.fetchItemBufferOne(upc).then(function(d1) {
+                    const sku = d1[0];
+                    const owner = d1[2];
+                    //console.log("sku: " + d1[0] + " upc: " + d1[1] + " owner: " + owner)
+                    lines[iterationNumber] = lines[iterationNumber]
+                        + " SKU: " + d1[0]
+                        + " UPC: " + d1[1];
                     return ins.fetchItemBufferTwo(upc);
                 }).then(function(d2) {
-
-                    /*
-                    const localSku = d1[0];
-                    const localUpc = d1[1];
-                    const localOwner = d1[2];
-                    const localFarmer = d1[3];
-                    */
-
-                    /*
-                    console.log(
-                        "\nITEM #" + itemNumber +
-                        "\nSKU: " + localSku + " UPC: " + localUpc +
-                        "\nOWNER ID: " + localOwner + 
-                        "\nFARMER ID: " + localFarmer + 
-                        "\nDISTRIBUTOR ID: " + d2[6] + 
-                        "\nRETAILER ID: " + d2[7] + 
-                        "\nCONSUMER ID: " + d2[8] + 
-                        "\nSTATE: " + d2[5] 
-                    );*/
-                    /*
-                    $("#ftc-harvested-item-list").append(
-                        "<li>ITEM #" + itemNumber +
-                        "<br>SKU: " + d1[0] + " UPC: " + d1[1] +
-                        "<br>OWNER ID: " + d1[2] + 
-                        "<br>FARMER ID: " + d1[3] + 
-                        "<br>DISTRIBUTOR ID: " + d2[6] + 
-                        "<br>RETAILER ID: " + d2[7] + 
-                        "<br>CONSUMER ID: " + d2[8] + 
-                        "<br><br>" +
-                        "</li>"
-                    );
-                    */
-
-                    $("#ftc-harvested-item-list").append(
-                        "<option value='" + upc + "'>" 
-                            + " ITEM #" + itemNumber 
-                            + " SKU: " + d1[0]
-                            + " UPC: " + d1[1]
-                            + "\nOWNER: " + d1[2]
-                            + "\nFARMER: " + d1[3]
-                            + "\nSTATE: " + d2[5] 
-                            + "</option>"
-                    );
-
+                    lines[iterationNumber] = lines[iterationNumber] 
+                        + " STATE: " + App.getStateName(d2[5])
+                        + " PRICE: " + d2[4]
+                        + "</option>"; 
+                    //console.log(lines[iterationNumber]);
+                    $("#ftc-harvested-item-list").append(lines[iterationNumber]);
                 });
             }
         });
+    },
+
+    returnToRegistration: function(event) {
+        $("#ftc-registration").show();
+        $("#ftc-farmer").hide();
+        $("#ftc-distributor").hide();
+        $("#ftc-product-details").hide();
+        $("#ftc-switch-account").hide();
     },
 };
 

@@ -171,19 +171,19 @@ contract('SupplyChain', function(accounts) {
         })
 
         // Mark an item as ForSale by calling function sellItem()
-        await supplyChain.sellItem(upc, 1)
+        await supplyChain.sellItem(upc, 2)
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
-        //console.log("Price: " + resultBufferTwo[4]); 
-        //console.log("ItemState: " + resultBufferTwo[5]);        
+        console.log("Price: " + resultBufferTwo[4]); 
+        console.log("ItemState: " + resultBufferTwo[5]);        
 
         // Verify the result set
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
         assert.equal(resultBufferOne[1], upc, 'Error: Invalid item UPC')
-        assert.equal(resultBufferTwo[4], 1, 'Error: Wrong price')
+        assert.equal(resultBufferTwo[4], 2, 'Error: Wrong price')
         assert.equal(resultBufferTwo[5], 3, 'Error: Invalid state')
         assert.equal(eventEmitted, true, 'Invalid event emitted')
           
@@ -223,7 +223,7 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
         assert.equal(resultBufferOne[1], upc, 'Error: Invalid item UPC')
         assert.equal(resultBufferOne[2], distributorID, 'Error: Owner should be the distributor.')
-        assert.equal(resultBufferTwo[4], 1, 'Error: Wrong price')
+        assert.equal(resultBufferTwo[4], 2, 'Error: Wrong price')
         assert.equal(resultBufferTwo[5], 4, 'Error: Invalid state')
         assert.equal(eventEmitted, true, 'Invalid event emitted')
         
@@ -336,12 +336,15 @@ contract('SupplyChain', function(accounts) {
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
+        console.log("result price: " + resultBufferTwo[4]);
+        console.log("product price: " + productPrice);
+
         // Verify the result set:
         assert.equal(resultBufferTwo[0], sku, 'Error: Invalid item SKU')
         assert.equal(resultBufferTwo[1], upc, 'Error: Invalid item UPC')
         assert.equal(resultBufferTwo[2], productID, 'Error: Invalid item productID')
         assert.equal(resultBufferTwo[3], productNotes, 'Error: Invalid item productNotes')
-        assert.equal(web3.utils.toWei(resultBufferTwo[4], "ether"), productPrice, 'Error: Invalid item productPrice')
+        assert.equal(resultBufferTwo[4], 2, 'Error: Invalid item productPrice')
         assert.equal(resultBufferTwo[5], 7, 'Error: Invalid item itemState')
         assert.equal(resultBufferTwo[6], distributorID, 'Error: Invalid distributorID')
         assert.equal(resultBufferTwo[7], retailerID, 'Error: Invalid retailerID')

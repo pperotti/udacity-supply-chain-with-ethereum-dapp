@@ -29,59 +29,20 @@
         </select>
         <br/><br/>
         <div class=button-div>
+            <b><i>Associate your Metamask account with the role.</i></b>
+            <br><br>
             <button class="btn-register-accounts" id="button" type="button" data-id="11">Register Address</button>
+        </div>
+        <hr/>
+        <div class=button-div>
+            <br>
+            <b><i>Make sure you have the right account in your Metamask wallet before pressing the button below.</i></b>
+            <br><br> 
+            <button class="btn-login" id="button" type="button" onClick="history.go(0)">Login with Metamask</button>
         </div>
     </div>
     <hr/>
-    <div id="ftc-header">
-        <!-- 
-            - This will contain details depending on the Role of the user.
-            - FARMER: Will list the items harvested by this address with its information
-            ---- We should see all the items harvested by this farmer.
-            - DISTRIBUTOR: List the items available for him to operate.
-            ---- We should see all the items we can sell.
-            - RETAILER: List the items available to BUY
-            ---- We should see all the items we can buy from which distributor.
-            - CONSUMER: List the items available to PURCHASE 
-            ---- We should see all the items we can purchase. 
-        -->
-    </div>
     <div id="ftc-harvest">
-        <div id="ftc-product-details">
-            <h2>Product Overview</h2>
-            <table style="width:100%">
-                <tr>
-                    <td>
-                        <div class="form-group">
-                            SKU
-                            <br>
-                            <input class="input-field" type="number" id="sku" name="sku"><br>
-                            UPC
-                            <br>
-                            <input type="number" id="upc" name="upc"><br>
-                            CURRENT OWNER ID
-                            <br>
-                            <input type="text" id="ownerID" name="ownerID"size="50"><br>
-                            <div class=button-div>
-                                <button class="btn-fetchOne" id="button" type="button" data-id="9">Fetch Data 1</button>
-                                <button class="btn-fetchTwo" id="button" type="button" data-id="10">Fetch Data 2</button>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        DATA DETAILS
-                        <hr/>
-                        DATA ONE
-                        <hr/>
-                        <div id="fetchone-details"></div>
-                        <hr/>
-                        DATA TWO
-                        <hr/>
-                        <div id="fetchtwo-details"></div>
-                    </td>
-                </tr>
-            </table>
-        </div>
         <div id="ftc-farmer" style="display: none">
             <div class=form-break></div>
             <h2>Welcome Farmer !!!</h2>
@@ -112,7 +73,7 @@
             </div>
             <hr/>
             <div class="form-group">
-                Item Harvested by this Farmer<br/><br/>
+                Items Harvested by this Farmer<br/><br/>
                 <select id="ftc-harvested-item-list">
                 
                 </select>
@@ -125,6 +86,13 @@
         <div id="ftc-distributor" style="display: none">
             <div class=form-break></div>
             <h2>Product Details</h2>
+            <br>
+            Elements available for distributors
+            <br>
+            <select id="ftc-item-list-for-distributors">
+                
+            </select>
+            <!--
             <div class="form-group">
                 Product Notes
                 <br>
@@ -142,15 +110,57 @@
                 Consumer ID
                 <br>
                 <input type="text" id="consumerID" name="consumerID" size="50"><br>
-                <br>
-                <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
-                <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
-                <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
-                <button class="btn-purchase" id="button" type="button" data-id="8">Purchase</button>
             </div>
+            -->
+            <br>
+            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
+            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
+            <!--
+            <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
+            <button class="btn-purchase" id="button" type="button" data-id="8">Purchase</button>
+            -->
         </div>
         <div class=form-break></div>
+        <div class="form-group" id="ftc-switch-account">
+            GO BACK TO SWITCH ACCOUNT
+            <BR><BR>
+            <button id="button" type="button" data-id="12">SWITCH ACCOUNT</button>
+        </div>
         <hr>
+    </div>
+    <div id="ftc-product-details">
+        <h2>Product Overview</h2>
+        <div class="form-group">
+            <!--
+            SKU
+            <br>
+            <input class="input-field" type="number" id="sku" name="sku"><br>
+            -->
+            UPC
+            <BR>
+            <input type="number" id="upc" name="upc"><br>
+            <!--
+            CURRENT OWNER ID
+            <br>
+            <input type="text" id="ownerID" name="ownerID"size="50"><br>
+            -->
+            <div class=button-div>
+                <button class="btn-fetchOne" id="button" type="button" data-id="9">Fetch Data 1</button>
+                <button class="btn-fetchTwo" id="button" type="button" data-id="10">Fetch Data 2</button>
+            </div>
+            <div>
+                <br><br>
+                DATA DETAILS
+                <hr/>
+                DATA ONE
+                <hr/>
+                <div id="fetchone-details"></div>
+                <hr/>
+                DATA TWO
+                <hr/>
+                <div id="fetchtwo-details"></div>
+            </div>
+        </div>
     </div>
 
     <h2>Transaction History<span id="ftc-history"></span></h2>
