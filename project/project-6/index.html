@@ -38,7 +38,7 @@
             <br>
             <b><i>Make sure you have the right account in your Metamask wallet before pressing the button below.</i></b>
             <br><br> 
-            <button class="btn-login" id="button" type="button" onClick="history.go(0)">Login with Metamask</button>
+            <button class="btn-login" id="button" type="button" onClick="javascript:history.go(0);">Login with Metamask</button>
         </div>
     </div>
     <hr/>
@@ -73,77 +73,142 @@
             </div>
             <hr/>
             <div class="form-group">
-                Items Harvested by this Farmer<br/><br/>
-                <select id="ftc-harvested-item-list">
-                
-                </select>
-                <br><br>
-                <button class="btn-process" id="button" type="button" data-id="2">Process</button>
-                <button class="btn-pack" id="button" type="button" data-id="3">Pack</button>
-                <button class="btn-forsale" id="button" type="button" data-id="4">ForSale</button>
+                <table>
+                    <tr>
+                        <th width="33%" class="item-header">Harvested</th>
+                        <th width="33%" class="item-header">Processed</th>
+                        <th width="33%" class="item-header">Packed</th>
+                    </tr>
+                    <tr>
+                        <td class="item-body-farmer">
+                            <select id="ftc-harvested-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                            <br><br>
+                            <button class="btn-process" id="button" type="button" data-id="2">Process</button>
+                        </td>
+                        <td class="item-body-farmer">
+                            <select id="ftc-processed-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                            <br><br>
+                            <button class="btn-pack" id="button" type="button" data-id="3">Pack</button>
+                        </td>
+                        <td class="item-body-farmer">
+                            <select id="ftc-packed-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                            <br><br>
+                            Price (in Ether):
+                            <input type="text" id="ftc-packed-item-price" value="1" width="100px">
+                            <br><br>
+                            <button class="btn-forsale" id="button" type="button" data-id="4">Available for Sale</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div id="ftc-distributor" style="display: none">
             <div class=form-break></div>
-            <h2>Product Details</h2>
-            <br>
-            Elements available for distributors
-            <br>
-            <select id="ftc-item-list-for-distributors">
-                
-            </select>
-            <!--
-            <div class="form-group">
-                Product Notes
-                <br>
-                <input type="text" id="productNotes" name="productNotes" value="Best beans for Espresso" size="60"><br>
-                Product Price
-                <br>
-                <input type="number" id="productPrice" name="productPrice" value=1>ETH<br>
-                Distributor ID
-                <br>
-                <input type="text" id="distributorID" name="distributorID" size="50">
-                <br>
-                Retailer ID
-                <br>
-                <input type="text" id="retailerID" name="retailerID" size="50"><br>
-                Consumer ID
-                <br>
-                <input type="text" id="consumerID" name="consumerID" size="50"><br>
+            <h2>Welcome Distributor !!!</h2>
+            <div class=form-group> 
+                Elements FOR SALE or READY TO SHIP
+                <br><br>
+                <table width="100%">
+                    <th width="50%" class="item-header"><label>FOR SALE</label></th>
+                    <th width="50%" class="item-header"><label>SOLD</label></th>
+                    <tr>
+                        <td class="item-body-distributor">
+                            <select id="ftc-forsale-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                        <td class="item-body-distributor">
+                            <select id="ftc-sold-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-body-distributor">
+                            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
+                        </td>
+                        <td class="item-body-distributor">
+                            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
+                        </td>
+                    </tr>
+                </table>
+                </div>
+        </div>
+        <div id="ftc-retailer" style="display: none">
+            <div class=form-break></div>
+            <h2>Welcome RETAILER !!!</h2>
+            <div class=form-group>    
+                Elements ready to be marked as RECEIVED
+                <br><br>
+                <table width="100%">
+                    <th width="50%" class="item-header"><label>AVAILABLE FOR RECEPTION</label></th>
+                    <th width="50%" class="item-header"><label>RECEIVED</label></th>
+                    <tr>
+                        <td class="item-body-retailer">
+                            <select id="ftc-shipped-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                        <td class="item-body-retailer">
+                            <select id="ftc-received-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-body-retailer">
+                            <button class="btn-buy" id="button" type="button" data-id="7">RECEIVE</button>
+                        </td>
+                        <td class="item-body-retailer">
+                            <label>All the items above are ready to be purchased by a customer.</label>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            -->
-            <br>
-            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
-            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
-            <!--
-            <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
-            <button class="btn-purchase" id="button" type="button" data-id="8">Purchase</button>
-            -->
+        </div>
+        <div id="ftc-consumer" style="display: none">
+            <div class=form-break></div>
+            <h2>Welcome CUSTOMER !!!</h2>
+            <div class=form-group>   
+                Elements AVAILABLE FOR PURCHASE or PURCHASED
+                <br><br><br>
+                <table width="100%">
+                    <th width="50%" class="item-header"><label>AVAILABLE FOR PURCHASE</label></th>
+                    <th width="50%" class="item-header"><label>PURCHASED</label></th>
+                    <tr>
+                        <td class="item-body-consumer">
+                            <select id="ftc-available-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                        <td class="item-body-consumer">
+                            <select id="ftc-purchased-item-list">
+                                <!-- Items added in runtime based on contract info -->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="item-body-consumer">
+                            <button class="btn-buy" id="button" type="button" data-id="8">PURCHASE</button>
+                        </td>
+                        <td class="item-body-consumer">
+                            <label>All the items above have been PURCHASED by this customer.</label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div class=form-break></div>
-        <div class="form-group" id="ftc-switch-account">
-            GO BACK TO SWITCH ACCOUNT
-            <BR><BR>
-            <button id="button" type="button" data-id="12">SWITCH ACCOUNT</button>
-        </div>
-        <hr>
-    </div>
-    <div id="ftc-product-details">
-        <h2>Product Overview</h2>
-        <div class="form-group">
-            <!--
-            SKU
-            <br>
-            <input class="input-field" type="number" id="sku" name="sku"><br>
-            -->
+        <div id="ftc-product-details" class="form-group" style="display: none">
             UPC
             <BR>
             <input type="number" id="upc" name="upc"><br>
-            <!--
-            CURRENT OWNER ID
-            <br>
-            <input type="text" id="ownerID" name="ownerID"size="50"><br>
-            -->
             <div class=button-div>
                 <button class="btn-fetchOne" id="button" type="button" data-id="9">Fetch Data 1</button>
                 <button class="btn-fetchTwo" id="button" type="button" data-id="10">Fetch Data 2</button>
@@ -161,7 +226,16 @@
                 <div id="fetchtwo-details"></div>
             </div>
         </div>
+        <div class=form-break></div>
+        <div class="form-group" id="ftc-switch-account" style="display: none">
+            CHOOSE A DIFFERENT METAMASK ACCOUNT AND PRESS SWITCH ACCOUNT or just refresh the page after making the switch in your metamask wallet.
+            <BR><BR>
+            <!--<button id="button" type="button" data-id="12">SWITCH ACCOUNT</button>-->
+            <button id="button" type="button" onClick='javascript:history.go(0);'>SWITCH ACCOUNT</button>
+        </div>
+        <hr>
     </div>
+    <!-- ---------------------------------------------------- -->
 
     <h2>Transaction History<span id="ftc-history"></span></h2>
     <div>

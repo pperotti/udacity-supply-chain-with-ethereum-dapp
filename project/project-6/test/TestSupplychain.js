@@ -178,7 +178,13 @@ contract('SupplyChain', function(accounts) {
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
         console.log("Price: " + resultBufferTwo[4]); 
-        console.log("ItemState: " + resultBufferTwo[5]);        
+        console.log("ItemState: " + resultBufferTwo[5]);
+
+        const itemsAvailableForSale = await supplyChain.getItemListForSale();
+        console.log("# Items for Sale: " + itemsAvailableForSale.length);
+        for (i=0;i<itemsAvailableForSale.length;i++) {
+            console.log("-> " + itemsAvailableForSale[i]);
+        }
 
         // Verify the result set
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
@@ -186,7 +192,6 @@ contract('SupplyChain', function(accounts) {
         assert.equal(resultBufferTwo[4], 2, 'Error: Wrong price')
         assert.equal(resultBufferTwo[5], 3, 'Error: Invalid state')
         assert.equal(eventEmitted, true, 'Invalid event emitted')
-          
     })
     
     // 5th Test
@@ -336,8 +341,8 @@ contract('SupplyChain', function(accounts) {
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
-        console.log("result price: " + resultBufferTwo[4]);
-        console.log("product price: " + productPrice);
+        //console.log("result price: " + resultBufferTwo[4]);
+        //console.log("product price: " + productPrice);
 
         // Verify the result set:
         assert.equal(resultBufferTwo[0], sku, 'Error: Invalid item SKU')
@@ -353,7 +358,6 @@ contract('SupplyChain', function(accounts) {
 
     // Extra Tests
     it("Get all items harvested by one particular farmer", async() => {
-        
         //console.log("Owner: " + (await supplyChain.getOwner()));
         const itemCount = await supplyChain.getHarvestedItemsCount(originFarmerID);
         //console.log("Item count: " + itemCount);
@@ -367,6 +371,16 @@ contract('SupplyChain', function(accounts) {
         assert.equal(itemCount, items.length, "Error: We should have 1 items harvested for this farmer");
         assert.equal(items[0], 100, "UPC value should be 100");
     })
+
+    // Test the contract can retrieve the list of items
+    it("Test item list", async() => {
+        const itemCount = await supplyChain.getItemCount();
+        console.log("item count: " + itemCount);
+        const itemList = await supplyChain.getItemList();
+        for (i=0;i<itemList.length;i++) {
+            console.log("-> " + itemList[i]);
+        }
+    }) 
 
 });
 

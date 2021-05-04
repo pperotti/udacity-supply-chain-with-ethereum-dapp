@@ -12,14 +12,17 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
   // Define 'owner'
   address owner;
 
-  // Define a variable called 'upc' for Universal Product Code (UPC)
-  // uint upc = 0; // This property is not needed.
+  // Define ItemCount
+  uint itemCount = 0; 
 
   // Define a variable called 'sku' for Stock Keeping Unit (SKU)
   uint sku = 0;
 
   // Define a public mapping 'items' that maps the UPC to an Item.
   mapping (uint => Item) items;
+
+  // All upcs used in items
+  uint[] usedUpcsInItems;
 
   // Track the items harvested by farmer
   //mapping (address => uint[]) itemCountHarvestedByFarmer;
@@ -207,6 +210,12 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
 
     // Increment sku
     sku = sku + 1;
+
+    // Increment item count
+    itemCount = itemCount + 1;
+
+    // Add to the upcs list 
+    usedUpcsInItems.push(_upc);
 
     // Emit the appropriate event
     emit Harvested(_upc);
@@ -454,12 +463,171 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     return copiedIndexes;
   }
 
+  function getItemListOnSaleCount() public view returns (uint) {
+    uint itemsForSale = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.ForSale) {
+        itemsForSale = itemsForSale + 1;
+      }
+    }
+    return itemsForSale;
+  }
+
+  function getItemListHarvested() public view returns (uint[] memory) {
+    return getItemListByState(State.Harvested);
+  }
+
+  function getItemListProcessed() public view returns (uint[] memory) {
+    return getItemListByState(State.Processed);
+  }
+
+  function getItemListPacked() public view returns (uint[] memory) {
+    return getItemListByState(State.Packed);
+  }
+
+  function getItemListForSale() public view returns (uint[] memory) {
+    return getItemListByState(State.ForSale);
+  }
+
+  function getItemListForDistributors() public view returns (uint[] memory) {
+     uint itemsForSale = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.ForSale) {
+        itemsForSale = itemsForSale + 1;
+      } else if (item.itemState == State.Sold) {
+        itemsForSale = itemsForSale + 1;
+      }
+    }
+
+    uint[] memory selectedItems = new uint[](itemsForSale); 
+    uint j = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.ForSale) {
+        selectedItems[j] = item.upc;
+        j++;
+      } else if (item.itemState == State.Sold) {
+        selectedItems[j] = item.upc;
+        j++;
+      }
+    }
+
+    return selectedItems;
+  }
+
+  function getItemListForRetailer() public view returns (uint[] memory) {
+     uint itemsForSale = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.Shipped) {
+        itemsForSale = itemsForSale + 1;
+      } else if (item.itemState == State.Received) {
+        itemsForSale = itemsForSale + 1;
+      }
+    }
+
+    uint[] memory selectedItems = new uint[](itemsForSale); 
+    uint j = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.Shipped) {
+        selectedItems[j] = item.upc;
+        j++;
+      } else if (item.itemState == State.Received) {
+        selectedItems[j] = item.upc;
+        j++;
+      }
+    }
+
+    return selectedItems;
+  }
+
+function getItemListForConsumer() public view returns (uint[] memory) {
+     uint itemsForSale = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.Received) {
+        itemsForSale = itemsForSale + 1;
+      } else if (item.itemState == State.Purchased) {
+        itemsForSale = itemsForSale + 1;
+      }
+    }
+
+    uint[] memory selectedItems = new uint[](itemsForSale); 
+    uint j = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == State.Received) {
+        selectedItems[j] = item.upc;
+        j++;
+      } else if (item.itemState == State.Purchased) {
+        selectedItems[j] = item.upc;
+        j++;
+      }
+    }
+
+    return selectedItems;
+  }
+
+  function getItemListReceived() public view returns (uint[] memory) {
+    return getItemListByState(State.Received);
+  }
+
+  function getItemListPurchased() public view returns (uint[] memory) {
+    return getItemListByState(State.Purchased);
+  }
+
+  function getItemListByState(State expectedState) private view returns (uint[] memory) {
+    uint itemsForSale = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == expectedState) {
+        itemsForSale = itemsForSale + 1;
+      }
+    }
+
+    uint[] memory selectedItems = new uint[](itemsForSale); 
+    uint j = 0;
+    for (uint i=0;i<itemCount;i++) {
+      uint upc = usedUpcsInItems[i];
+      Item memory item = items[upc];
+      if (item.itemState == expectedState) {
+        selectedItems[j] = item.upc;
+        j++;
+      }
+    }
+
+    return selectedItems;
+  }
+
   function getNextSku() public view returns (uint) {
     return sku;
   }
 
   function getOwner() public view returns (address) {
     return owner;
+  }
+
+  function getItemList() public view  returns (uint[] memory) {
+    uint[] memory copiedIndexes = new uint[](itemCount);
+    for (uint i = 0; i < itemCount; i++ ) {
+      copiedIndexes[i] = usedUpcsInItems[i];
+    }
+    return copiedIndexes;
+  }
+
+  function getItemCount() public view returns (uint) {
+    return itemCount;
   }
 
 }

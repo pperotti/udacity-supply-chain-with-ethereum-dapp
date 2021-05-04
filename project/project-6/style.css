@@ -9,7 +9,6 @@ body {
   margin: 0 auto;
 }
 
-
 .bold { 
   font-weight: bolder;
 }
@@ -63,4 +62,29 @@ button {
 
 .horizontal-rule {
   background-color:#BDBDBD;
+}
+
+.item-header {
+  background-color:#0097A7;
+  padding:10px;
+}
+
+.item-body-farmer {
+  background-color:#cccccc;
+  vertical-align: top;
+}
+
+.item-body-distributor {
+  background-color:#99cccc;
+  vertical-align: top;
+}
+
+.item-body-retailer {
+  background-color:#66ccff;
+  vertical-align: top;
+}
+
+.item-body-consumer {
+  background-color:#ccccff;
+  vertical-align: top;
 }
