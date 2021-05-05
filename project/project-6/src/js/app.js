@@ -20,12 +20,12 @@ const App = {
     consumerID: "0x0000000000000000000000000000000000000000",
 
     init: async function () {
-        //App.readForm();
         
         /// Setup access to blockchain
         return App.initWeb3();
     },
 
+/*
     readForm: function () {
         
         App.sku = $("#sku").val();
@@ -57,6 +57,7 @@ const App = {
         console.log("App.retailerID: " + App.retailerID);
         console.log("App.consumerID: " + App.consumerID);
     },
+*/
 
     initWeb3: async function () {
         /// Find or Inject Web3 Provider
@@ -630,7 +631,6 @@ const App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
             return ins.getHarvestedItemsByFarmer(App.metamaskAccountID);
-            //return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             //List the items currently 
@@ -641,14 +641,12 @@ const App = {
             for (var i=0;i<itemsCount;i++) {
                 const iterationNumber = i;
                 const upc = items[iterationNumber];
-                //console.log("item: " + iterationNumber + " upc: " + upc);
                 lines[iterationNumber] = "<option value='" + upc + "'>"
                     + "#" + iterationNumber;
 
                 ins.fetchItemBufferOne(upc).then(function(d1) {
                     const sku = d1[0];
                     const owner = d1[2];
-                    //console.log("sku: " + d1[0] + " upc: " + d1[1] + " owner: " + owner)
                     lines[iterationNumber] = lines[iterationNumber]
                         + " SKU: " + d1[0]
                         + " UPC: " + d1[1];
@@ -657,8 +655,7 @@ const App = {
                     lines[iterationNumber] = lines[iterationNumber] 
                         + " ST: " + App.getStateName(d2[5])
                         + " $: " + d2[4]
-                        + "</option>"; 
-                    //console.log(lines[iterationNumber]);
+                        + "</option>";
                     if (d2[5] == 0) {
                         $("#ftc-harvested-item-list").append(lines[iterationNumber]);
                     } else if (d2[5] == 1) {
@@ -679,7 +676,6 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            //return ins.getItemListForDistributors({from: App.metamaskAccountID});
             return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
@@ -694,14 +690,12 @@ const App = {
             for (var i=0;i<itemsCount;i++) {
                 const iterationNumber = i;
                 const upc = items[iterationNumber];
-                //console.log("item: " + iterationNumber + " upc: " + upc);
                 lines[iterationNumber] = "<option value='" + upc + "'>"
                     + " ITEM #" + iterationNumber;
 
                 ins.fetchItemBufferOne(upc).then(function(d1) {
                     const sku = d1[0];
                     const owner = d1[2];
-                    //console.log("sku: " + d1[0] + " upc: " + d1[1] + " owner: " + owner)
                     lines[iterationNumber] = lines[iterationNumber]
                         + " SKU: " + d1[0]
                         + " UPC: " + d1[1];
@@ -710,8 +704,7 @@ const App = {
                     lines[iterationNumber] = lines[iterationNumber] 
                         + " STATE: " + App.getStateName(d2[5])
                         + " PRICE: " + d2[4]
-                        + "</option>"; 
-                    //console.log(lines[iterationNumber]);
+                        + "</option>";
                     if (d2[5] == 3) {
                         $("#ftc-forsale-item-list").append(lines[iterationNumber]);
                     } else if (d2[5] == 4) {
@@ -730,8 +723,7 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            //return ins.getItemListForRetailer({from: App.metamaskAccountID});
-            return ins.getItemListByRole({from: App.metamaskAccountID});
+            return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             console.log("Count: " + itemsCount);
@@ -745,14 +737,12 @@ const App = {
             for (var i=0;i<itemsCount;i++) {
                 const iterationNumber = i;
                 const upc = items[iterationNumber];
-                //console.log("item: " + iterationNumber + " upc: " + upc);
                 lines[iterationNumber] = "<option value='" + upc + "'>"
                     + " ITEM #" + iterationNumber;
 
                 ins.fetchItemBufferOne(upc).then(function(d1) {
                     const sku = d1[0];
                     const owner = d1[2];
-                    //console.log("sku: " + d1[0] + " upc: " + d1[1] + " owner: " + owner)
                     lines[iterationNumber] = lines[iterationNumber]
                         + " SKU: " + d1[0]
                         + " UPC: " + d1[1];
@@ -761,8 +751,7 @@ const App = {
                     lines[iterationNumber] = lines[iterationNumber] 
                         + " STATE: " + App.getStateName(d2[5])
                         + " PRICE: " + d2[4]
-                        + "</option>"; 
-                    //console.log(lines[iterationNumber]);
+                        + "</option>";
                     if (d2[5] == 5) {
                         $("#ftc-shipped-item-list").append(lines[iterationNumber]);
                     } else if (d2[5] == 6) {
@@ -781,7 +770,7 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            return ins.getItemListByRole({from: App.metamaskAccountID});
+            return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             console.log("Consumer Count: " + itemsCount);
@@ -795,14 +784,12 @@ const App = {
             for (var i=0;i<itemsCount;i++) {
                 const iterationNumber = i;
                 const upc = items[iterationNumber];
-                //console.log("item: " + iterationNumber + " upc: " + upc);
                 lines[iterationNumber] = "<option value='" + upc + "'>"
                     + " ITEM #" + iterationNumber;
 
                 ins.fetchItemBufferOne(upc).then(function(d1) {
                     const sku = d1[0];
                     const owner = d1[2];
-                    //console.log("sku: " + d1[0] + " upc: " + d1[1] + " owner: " + owner)
                     lines[iterationNumber] = lines[iterationNumber]
                         + " SKU: " + d1[0]
                         + " UPC: " + d1[1];
@@ -811,8 +798,7 @@ const App = {
                     lines[iterationNumber] = lines[iterationNumber] 
                         + " STATE: " + App.getStateName(d2[5])
                         + " PRICE: " + d2[4]
-                        + "</option>"; 
-                    //console.log(lines[iterationNumber]);
+                        + "</option>";
                     if (d2[5] == 6) {
                         $("#ftc-available-item-list").append(lines[iterationNumber]);
                     } else if (d2[5] == 7) {
