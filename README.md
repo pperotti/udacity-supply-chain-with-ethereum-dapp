@@ -9,6 +9,17 @@ Pablo Perotti (pablo.perotti@gmail.com)
 ## Source Code
 https://github.com/pperotti/udacity-supply-chain-with-ethereum-dapp.git
 
+## Documentation (Viewer's Permission)
+
+### UML Diagrams
+https://drive.google.com/file/d/1lJgK4C2v-iNkPWpHs-WvW99nv_BBM6_f/view?usp=sharing
+
+### Project
+https://docs.google.com/document/d/1l5lE4mMfp1YAfyzYwe_2tQe8KvSDTgeE2VlpdBhKPeY/edit?usp=sharing
+
+### PDF Version
+Under /documentation folder, you can find a PDF version of all the official documentation. 
+
 ## Tools information
 Truffle v5.2.4 (core: 5.2.4)
 Solidity v0.5.16 (solc-js)
