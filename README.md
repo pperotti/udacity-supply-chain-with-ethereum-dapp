@@ -79,11 +79,10 @@ NOTE: At any point, regardless of the role, you can query the Supply Chain for d
 $ truffle(development) deploy --reset
 
 2) Run all tests (make sure you are located in project/project-6 folder)
+You will see something like:
+
+```markdown
 $ truffle(development) test
-
-You will see something like: 
-
-{code}
 Using network 'development'.
 
 Compiling your contracts...
@@ -96,7 +95,6 @@ Farmer: accounts[1]  0x018C2daBef4904ECbd7118350A0c54DbeaE3549A
 Distributor: accounts[2]  0xCe5144391B4aB80668965F2Cc4f2CC102380Ef0A
 Retailer: accounts[3]  0x460c31107DD048e34971E57DA2F99f659Add4f02
 Consumer: accounts[4]  0xD37b7B8C62BE2fdDe8dAa9816483AeBDBd356088
-
 
   Contract: SupplyChain
 FARMER ID: 0x018C2daBef4904ECbd7118350A0c54DbeaE3549A SKU: 1 UPC: 100
@@ -121,9 +119,9 @@ ORIGIN FARMER LON: 144.341490
     ✓ Testing smart contract function fetchItemBufferTwo() that allows anyone to fetch item details from blockchain
     ✓ Get all items harvested by one particular farmer (70ms)
 
-
   11 passing (2s)
-{code}
+
+```
 
 ## Tools information
 Truffle v5.2.4 (core: 5.2.4)
