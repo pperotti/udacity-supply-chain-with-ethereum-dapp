@@ -20,6 +20,111 @@ https://docs.google.com/document/d/1l5lE4mMfp1YAfyzYwe_2tQe8KvSDTgeE2VlpdBhKPeY/
 ### PDF Version
 Under /documentation folder, you can find a PDF version of all the official documentation. 
 
+## How to Run the Project
+
+### Setup the project
+
+Clone the project from the repo above,
+$ git clone https://github.com/pperotti/udacity-supply-chain-with-ethereum-dapp.git
+
+Execute the following commands in 3 different terminals: 
+1) Run ganache-cli in the first terminal window
+$ganache-cli -m "spirit supply whale amount human item harsh scare congress discover talent hamster"
+
+1.1) Make sure you add 4 accounts in your Metamask Wallet. I suggest using the ROLE as the name of an account, so at the end of the set up you will end up with 4 accounts: FARMER, DISTRIBUTOR, RETAILER, CONSUMER, all with 100ETH. 
+
+2) Run truffle console in the second terminal window
+$ truffle console
+
+3) Run WEB SERVER in third terminal window
+$ cd project/project-6
+$ npm run dev
+
+### Test the Supply Chain
+
+1) Open the web page at http://localhost:3000 after selecting your FARMER's account in METAMASK WALLET. 
+
+2) Register your FARMER'S account
+
+3) HARVEST a few items with different UPC (Let's say 100, 101, 102, 103)
+
+4) Execute: PROCESS, PACK, SELL operations. You will observe the item's list is updated along with how you move the items in between the different states. 
+
+5) Move METAMASK WALLET to the DISTRIBUTOR account. 
+
+6) Refresh Web Page (you will observe that you are now back in the registration screen)
+
+7) Register DISTRIBUTOR account 
+
+8) Test BUY & SHIP operations. You can observe now, the options available are BUY and SHIP. 
+
+9) Once you apply both operations, move your METAMASK ACCOUNT to the RETAILER'S account.
+
+10) Refresh Screen. You will be prompt back to the registration screen so you can associate your METAMASK account with the RETAILER'S role. 
+
+11) You can mark the item of your preference as RECEIVED. After that, the item appear on the right. From that moment on, the item is available to be PURCHASED by any CUSTOMER. 
+
+12) Switch your METAMASK WALLET to use a CUSTOMER account. 
+
+13) Refresh Page. You will be prompt back to the registration screen so you can associate your METAMASK ACCOUNT with the CUSTOMER'S role. 
+
+14) Last, but not least, you can not PURCHASE the item. After that, the item will appear on the right. 
+
+
+NOTE: At any point, regardless of the role, you can query the Supply Chain for details about any UPC. 
+
+### Run Unit Tests
+
+1) Reset the deployed contract. 
+$ truffle(development) deploy --reset
+
+2) Run all tests (make sure you are located in project/project-6 folder)
+$ truffle(development) test
+
+You will see something like: 
+
+{code}
+Using network 'development'.
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+ganache-cli accounts used here...
+Contract Owner: accounts[0]  0x27D8D15CbC94527cAdf5eC14B69519aE23288B95
+Farmer: accounts[1]  0x018C2daBef4904ECbd7118350A0c54DbeaE3549A
+Distributor: accounts[2]  0xCe5144391B4aB80668965F2Cc4f2CC102380Ef0A
+Retailer: accounts[3]  0x460c31107DD048e34971E57DA2F99f659Add4f02
+Consumer: accounts[4]  0xD37b7B8C62BE2fdDe8dAa9816483AeBDBd356088
+
+
+  Contract: SupplyChain
+FARMER ID: 0x018C2daBef4904ECbd7118350A0c54DbeaE3549A SKU: 1 UPC: 100
+UPC: 100 LENGTH: 1
+SKU: 1
+UPC: 100
+ORIGIN OWNER ID: 0x018C2daBef4904ECbd7118350A0c54DbeaE3549A
+ORIGIN FARMER ID: 0x018C2daBef4904ECbd7118350A0c54DbeaE3549A
+ORIGIN FARMER NAME: John Doe
+ORIGIN FARMER INFORMATION: Yarray Valley
+ORIGIN FARMER LAT: -38.239770
+ORIGIN FARMER LON: 144.341490
+    ✓ Testing smart contract function harvestItem() that allows a farmer to harvest coffee (619ms)
+    ✓ Testing smart contract function processItem() that allows a farmer to process coffee (168ms)
+    ✓ Testing smart contract function packItem() that allows a farmer to pack coffee (140ms)
+    ✓ Testing smart contract function sellItem() that allows a farmer to sell coffee (140ms)
+    ✓ Testing smart contract function buyItem() that allows a distributor to buy coffee (176ms)
+    ✓ Testing smart contract function shipItem() that allows a distributor to ship coffee (163ms)
+    ✓ Testing smart contract function receiveItem() that allows a retailer to mark coffee received (160ms)
+    ✓ Testing smart contract function purchaseItem() that allows a consumer to purchase coffee (143ms)
+    ✓ Testing smart contract function fetchItemBufferOne() that allows anyone to fetch item details from blockchain (57ms)
+    ✓ Testing smart contract function fetchItemBufferTwo() that allows anyone to fetch item details from blockchain
+    ✓ Get all items harvested by one particular farmer (70ms)
+
+
+  11 passing (2s)
+{code}
+
 ## Tools information
 Truffle v5.2.4 (core: 5.2.4)
 Solidity v0.5.16 (solc-js)
