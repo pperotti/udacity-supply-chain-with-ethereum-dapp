@@ -177,14 +177,8 @@ contract('SupplyChain', function(accounts) {
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
 
-        console.log("Price: " + resultBufferTwo[4]); 
-        console.log("ItemState: " + resultBufferTwo[5]);
-
-        const itemsAvailableForSale = await supplyChain.getItemListForSale();
-        console.log("# Items for Sale: " + itemsAvailableForSale.length);
-        for (i=0;i<itemsAvailableForSale.length;i++) {
-            console.log("-> " + itemsAvailableForSale[i]);
-        }
+        //console.log("Price: " + resultBufferTwo[4]); 
+        //console.log("ItemState: " + resultBufferTwo[5]);
 
         // Verify the result set
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')
@@ -371,16 +365,6 @@ contract('SupplyChain', function(accounts) {
         assert.equal(itemCount, items.length, "Error: We should have 1 items harvested for this farmer");
         assert.equal(items[0], 100, "UPC value should be 100");
     })
-
-    // Test the contract can retrieve the list of items
-    it("Test item list", async() => {
-        const itemCount = await supplyChain.getItemCount();
-        console.log("item count: " + itemCount);
-        const itemList = await supplyChain.getItemList();
-        for (i=0;i<itemList.length;i++) {
-            console.log("-> " + itemList[i]);
-        }
-    }) 
 
 });
 

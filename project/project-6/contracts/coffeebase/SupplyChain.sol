@@ -475,138 +475,72 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole 
     return itemsForSale;
   }
 
-  function getItemListHarvested() public view returns (uint[] memory) {
-    return getItemListByState(State.Harvested);
-  }
-
-  function getItemListProcessed() public view returns (uint[] memory) {
-    return getItemListByState(State.Processed);
-  }
-
-  function getItemListPacked() public view returns (uint[] memory) {
-    return getItemListByState(State.Packed);
-  }
-
-  function getItemListForSale() public view returns (uint[] memory) {
-    return getItemListByState(State.ForSale);
-  }
-
-  function getItemListForDistributors() public view returns (uint[] memory) {
-     uint itemsForSale = 0;
+  function getItemCountByRole() internal view returns (uint) {
+    uint itemCountByRole = 0;
     for (uint i=0;i<itemCount;i++) {
       uint upc = usedUpcsInItems[i];
       Item memory item = items[upc];
-      if (item.itemState == State.ForSale) {
-        itemsForSale = itemsForSale + 1;
-      } else if (item.itemState == State.Sold) {
-        itemsForSale = itemsForSale + 1;
+      if (isDistributor(msg.sender)) {
+        if (item.itemState == State.ForSale) {
+          itemCountByRole++;
+        } else if (item.itemState == State.Sold) {
+          itemCountByRole++;
+        }
+      } else if (isRetailer(msg.sender)) {
+        if (item.itemState == State.Shipped) {
+          itemCountByRole++;
+        } else if (item.itemState == State.Received) {
+          itemCountByRole++;
+        }
+      } else if (isConsumer(msg.sender)) {
+        if (item.itemState == State.Received) {
+          itemCountByRole++;
+        } else if (item.itemState == State.Purchased) {
+          itemCountByRole++;
+        }
       }
     }
-
-    uint[] memory selectedItems = new uint[](itemsForSale); 
-    uint j = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == State.ForSale) {
-        selectedItems[j] = item.upc;
-        j++;
-      } else if (item.itemState == State.Sold) {
-        selectedItems[j] = item.upc;
-        j++;
-      }
-    }
-
-    return selectedItems;
+    return itemCountByRole;
   }
 
-  function getItemListForRetailer() public view returns (uint[] memory) {
-     uint itemsForSale = 0;
+  /**
+   * Retrieve all the items in certain state depending on the role of the caller. 
+   * (DISTRIBUTOR,RETAILER,CONSUMER)  
+   */
+  function getItemsByRole() public view returns (uint[] memory) {
+    uint itemCountByRole = getItemCountByRole();
+
+    uint[] memory selectedItems = new uint[](itemCountByRole); 
+    uint selectedItemIndex = 0;
     for (uint i=0;i<itemCount;i++) {
       uint upc = usedUpcsInItems[i];
       Item memory item = items[upc];
-      if (item.itemState == State.Shipped) {
-        itemsForSale = itemsForSale + 1;
-      } else if (item.itemState == State.Received) {
-        itemsForSale = itemsForSale + 1;
+      if (isDistributor(msg.sender)) {
+        if (item.itemState == State.ForSale) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        } else if (item.itemState == State.Sold) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        }
+      } else if (isRetailer(msg.sender)) {
+        if (item.itemState == State.Shipped) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        } else if (item.itemState == State.Received) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        }
+      } else if (isConsumer(msg.sender)) {
+        if (item.itemState == State.Received) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        } else if (item.itemState == State.Purchased) {
+          selectedItems[selectedItemIndex] = item.upc;
+          selectedItemIndex++;
+        }
       }
     }
-
-    uint[] memory selectedItems = new uint[](itemsForSale); 
-    uint j = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == State.Shipped) {
-        selectedItems[j] = item.upc;
-        j++;
-      } else if (item.itemState == State.Received) {
-        selectedItems[j] = item.upc;
-        j++;
-      }
-    }
-
-    return selectedItems;
-  }
-
-function getItemListForConsumer() public view returns (uint[] memory) {
-     uint itemsForSale = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == State.Received) {
-        itemsForSale = itemsForSale + 1;
-      } else if (item.itemState == State.Purchased) {
-        itemsForSale = itemsForSale + 1;
-      }
-    }
-
-    uint[] memory selectedItems = new uint[](itemsForSale); 
-    uint j = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == State.Received) {
-        selectedItems[j] = item.upc;
-        j++;
-      } else if (item.itemState == State.Purchased) {
-        selectedItems[j] = item.upc;
-        j++;
-      }
-    }
-
-    return selectedItems;
-  }
-
-  function getItemListReceived() public view returns (uint[] memory) {
-    return getItemListByState(State.Received);
-  }
-
-  function getItemListPurchased() public view returns (uint[] memory) {
-    return getItemListByState(State.Purchased);
-  }
-
-  function getItemListByState(State expectedState) private view returns (uint[] memory) {
-    uint itemsForSale = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == expectedState) {
-        itemsForSale = itemsForSale + 1;
-      }
-    }
-
-    uint[] memory selectedItems = new uint[](itemsForSale); 
-    uint j = 0;
-    for (uint i=0;i<itemCount;i++) {
-      uint upc = usedUpcsInItems[i];
-      Item memory item = items[upc];
-      if (item.itemState == expectedState) {
-        selectedItems[j] = item.upc;
-        j++;
-      }
-    }
-
     return selectedItems;
   }
 

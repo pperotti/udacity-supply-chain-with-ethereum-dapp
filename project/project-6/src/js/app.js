@@ -630,6 +630,7 @@ const App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
             return ins.getHarvestedItemsByFarmer(App.metamaskAccountID);
+            //return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             //List the items currently 
@@ -678,7 +679,8 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            return ins.getItemListForDistributors({from: App.metamaskAccountID});
+            //return ins.getItemListForDistributors({from: App.metamaskAccountID});
+            return ins.getItemsByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             console.log("Count: " + itemsCount);
@@ -728,7 +730,8 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            return ins.getItemListForRetailer({from: App.metamaskAccountID});
+            //return ins.getItemListForRetailer({from: App.metamaskAccountID});
+            return ins.getItemListByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             console.log("Count: " + itemsCount);
@@ -778,7 +781,7 @@ const App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             ins = instance;
-            return ins.getItemListForConsumer({from: App.metamaskAccountID});
+            return ins.getItemListByRole({from: App.metamaskAccountID});
         }).then(function(items) {
             itemsCount = items.length;
             console.log("Consumer Count: " + itemsCount);
