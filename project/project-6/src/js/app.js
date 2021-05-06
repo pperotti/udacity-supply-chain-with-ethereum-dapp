@@ -20,49 +20,15 @@ const App = {
     consumerID: "0x0000000000000000000000000000000000000000",
 
     init: async function () {
-        
         /// Setup access to blockchain
         return App.initWeb3();
     },
-
-/*
-    readForm: function () {
-        
-        App.sku = $("#sku").val();
-        App.upc = $("#upc").val();
-        App.ownerID = $("#ownerID").val();
-        App.originFarmerID = $("#originFarmerID").val();
-        App.originFarmName = $("#originFarmName").val();
-        App.originFarmInformation = $("#originFarmInformation").val();
-        App.originFarmLatitude = $("#originFarmLatitude").val();
-        App.originFarmLongitude = $("#originFarmLongitude").val();
-        App.productNotes = $("#productNotes").val();
-        App.productPrice = $("#productPrice").val();
-        App.distributorID = $("#distributorID").val();
-        App.retailerID = $("#retailerID").val();
-        App.consumerID = $("#consumerID").val();
-
-        console.log("App.sku: " + App.sku);
-        console.log("App.upc: " + App.upc);
-        console.log("App.metamaskAddress: " + App.metamaskAccountID);
-        console.log("App.ownerID: " + App.ownerID);
-        console.log("App.originFarmerID: " + App.originFarmerID);
-        console.log("App.originFarmName: " + App.originFarmName);
-        console.log("App.originFarmInformation: " + App.originFarmInformation);
-        console.log("App.originFarmLatitude: " + App.originFarmLatitude);
-        console.log("App.originFarmLongitude: " + App.originFarmLongitude);
-        console.log("App.productNotes: " + App.productNotes);
-        console.log("App.productPrice: " + App.productPrice);
-        console.log("App.distributorID: " + App.distributorID);
-        console.log("App.retailerID: " + App.retailerID);
-        console.log("App.consumerID: " + App.consumerID);
-    },
-*/
 
     initWeb3: async function () {
         /// Find or Inject Web3 Provider
         /// Modern dapp browsers...
         if (window.ethereum) {
+            console.log("window.ethereum");
             App.web3Provider = window.ethereum;
             try {
                 // Request account access
@@ -74,11 +40,17 @@ const App = {
         }
         // Legacy dapp browsers...
         else if (window.web3) {
+            console.log("window.web3");
             App.web3Provider = window.web3.currentProvider;
         }
         // If no injected web3 instance is detected, fall back to Ganache
         else {
-            App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+            console.log("Incompatible Browser!");
+            //Web3 is NOT imported. 
+            //App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+            console.error("It looks you don't have Metamask Wallet plugin installed.");
+            $("#ftc-error").append("<h1 style='text-align:center;color:red'>It looks you don't have Metamask Wallet plugin installed.<br>Please check the setup instructions to run the project.</h1>")
+            return;
         }
 
         App.getMetaMaskAccountID();
@@ -528,19 +500,25 @@ const App = {
         } else if (role == 1) {
             sc.addDistributor(App.metamaskAccountID, {from: App.metamaskAccountID}).then(function() {
                 App.showDistributorOps();
-            }).catch(function(err) {
+            })
+            .then(() => App.fetchItemsForDistributor())
+            .catch(function(err) {
                 console.log(err);
             });
         } else if (role == 2) {
             sc.addRetailer(App.metamaskAccountID, {from: App.metamaskAccountID}).then(function() {
                 App.showRetailerOps();
-            }).catch(function(err) {
+            })
+            .then(() => App.fetchItemsForRetailer())
+            .catch(function(err) {
                 console.log(err);
             });
         } else if (role == 3) {
             sc.addConsumer(App.metamaskAccountID, {from: App.metamaskAccountID}).then(function() {
                 App.showConsumerOps();
-            }).catch(function(err) {
+            })
+            .then(() => App.fetchItemsForConsumer())
+            .catch(function(err) {
                 console.log(err);
             });
         }

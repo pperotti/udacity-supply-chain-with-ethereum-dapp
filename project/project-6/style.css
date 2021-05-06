@@ -88,3 +88,8 @@ button {
   background-color:#ccccff;
   vertical-align: top;
 }
+
+.error {
+  color: red;
+  text-align: center;
+}
