@@ -27,17 +27,21 @@ Under /documentation folder, you can find a PDF version of all the official docu
 Clone the project from the repo above,
 $ git clone https://github.com/pperotti/udacity-supply-chain-with-ethereum-dapp.git
 
+Once that it is completed, move to project/project-6 directory:
+
+$ cd project/project-6
+
 Execute the following commands in 3 different terminals: 
 1) Run ganache-cli in the first terminal window
 $ganache-cli -m "spirit supply whale amount human item harsh scare congress discover talent hamster"
 
 1.1) Make sure you add 4 accounts in your Metamask Wallet. I suggest using the ROLE as the name of an account, so at the end of the set up you will end up with 4 accounts: FARMER, DISTRIBUTOR, RETAILER, CONSUMER, all with 100ETH. 
 
-2) Run truffle console in the second terminal window
+2) Run truffle console in the second terminal window and deploy the contract.
 $ truffle console
+$ deploy --reset
 
 3) Run WEB SERVER in third terminal window
-$ cd project/project-6
 $ npm run dev
 
 ### Test the Supply Chain
@@ -72,6 +76,9 @@ $ npm run dev
 
 
 NOTE: At any point, regardless of the role, you can query the Supply Chain for details about any UPC. 
+
+### Video Demo @ Youtube (unlisted video)
+https://youtu.be/gCFrYVbtpXU
 
 ### Run Unit Tests
 
